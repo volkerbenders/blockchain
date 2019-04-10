@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Some details on BlockChain</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <style type="text/css">
+    @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+    @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+    @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+    body {
+      font-family: 'Droid Serif';
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: 'Yanone Kaffeesatz';
+      font-weight: normal;
+    }
+
+    .remark-code,
+    .remark-inline-code {
+      font-family: 'Ubuntu Mono';
+    }
+  </style>
+</head>
+
+<body>
+  <textarea id="source">
+
+class: center, middle
+background-image: url(https://cdn-images-1.medium.com/max/1600/1*3shOJNSwkZIl07R1n9nVUw.jpeg)
+# BlockChain
+
+## What Napster, Gambeling and BitCoin have in common
+
+???
+
+Teaser to get attention.
+
+---
+class: center, middle
+# Agenda
+
+1. What is BlockChain
+2. Key Aspects
+3. Use Cases
+4. Code
+
+---
+
+# Intro
+
+BlockChain is the technology behind buzzwords like Crypto-Currency and Smart Contracts.
+
+???
+
+BlockChain is an amazing topic with too many aspects to mention them all.
+So, these pages will give a rough overview of the technology. Some example code is shown.
+
+
+---
+
+
+# What is BlockChain
+
+Basicly it's just a list to store informtion in a tamper proof way
+
+--
+
+Everybody can add virtually anything to the chain
+
+--
+
+All participants are connected by a p2p network. They're called nodes.
+
+--
+
+The network distributes and syncs the entire list to all nodes.
+> That's where Napster comes in.
+
+---
+
+# What is BlockChain
+
+## Key Aspects
+
+--
+
+* Block - Information is stored in blocks - hence the 1st part of the name.
+  Each block stores meta data (timestamp, link to its predecessor...)
+
+--
+
+* Hash - Each block has a hash value. By checking this value it can be checked if this node has been changed after adding it to the chain
+--
+
+* Chain - Blocks are stored in a list - this is the 2nd part of the name
+
+--
+
+* Decentralized - The entire list / BlockChain is distributed to each node in the network
+
+--
+
+* Proof of work - Before adding a new Block one has to solve a riddle
+
+--
+
+* Participants are identified by hashes - not names
+
+---
+
+# What is BlockChain
+
+## Key Aspects
+
+### Blocks
+
+Blocks are described by
+
+--
+
+* consecutive number
+
+--
+
+* timestamp
+
+--
+
+* cryptographic hash
+
+--
+
+* link to the previous block
+
+--
+
+You want to see this in action: [BlockChain-Demo](https://anders.com/blockchain/blockchain.html)
+
+---
+
+# Block implemented in with JavaScript
+
+```JavaScript
+class Block {
+  constructor(data, prevHash) {
+    this.id = 0
+    this._timestamp = Date.now()
+    this._data = data
+    this._prevHash = prevHash
+    this._hash = this.calcHash()
+  }
+  ...
+```
+
+???
+
+Getters / Setters and methods have been omitted for the sake of simplicity
+---
+
+## Adding data
+
+Adding data is simple.
+--
+
+1. Get the most recent version of the BlockChain
+
+--
+
+2. Build a new Block with your data and the hash of the last block
+
+--
+
+3. Add the block to the chain of blocks.
+
+--
+
+4. Upload `your` copy of the list to the network
+
+--
+
+In theory you're done.
+
+---
+
+## Adding data
+
+### JavaScript
+
+
+```JavaScript
+const lastBlock = myBlockChain[chain.length - 1]
+const data = 'Sarah kauft für €0.50 Knete'
+
+var linkedBlock = new Block(data, lastBlock.hash)
+
+linkedBlock.id = lastBlock.id + 1
+linkedBlock.calcHash()
+
+myBlockChain.push(linkedBlock)
+```
+
+
+Of course this is over simplified.
+
+---
+
+## Adding data
+
+### Proof of work
+
+We've learned the blockchain network is open to everyone.
+How do we prevent someone from flooding / spamming our chain?
+
+Solution: We require all participants to solve a riddle before they're allowed to add a new Block to the chain.
+
+This is he gambeling aspect.
+???
+
+The idea is to make it inefficient or impossible to spam the blockchain network
+
+---
+
+## Adding data
+
+### BitCoin: Proof of work
+
+In the BitCoin blockchain the riddle is to find a hash that starts with a certain number of zeros.
+
+Wait a minute.
+
+>What does 'find a hash that starts in a certain way' mean?
+
+???
+
+As long as the block data doesn't change the hash function will always yield the same hash value!
+
+---
+
+## Adding data
+
+### BitCoin: Proof of work - some details on the used crypto hash function
+
+> SHA-256 produces 256 bits which is 32 bytes, not characters, each byte has 256 possible values.
+
+> There are 256 bits and each bit has 2 values (0 or 1), thus 2^256.
+There are 32 bytes and each byte has 256 values, thus 256^32.
+Note: 2^256 == 256^32 ~= 10^77.
+
+That's 10^77 possible values a hash can have.
+
+> Kornreich used a very rough estimate of 10 trillion galaxies in the universe. Multiplying that by the Milky Way's estimated 100 billion stars results in a large number indeed: 1,000,000,000,000,000,000,000,000 stars, or a "1" with 24 zeros after it
+
+---
+
+## Adding data
+
+### BitCoin: Proof of work - some details on the used crypto hash function
+
+> There are 256 bits and each bit has 2 values (0 or 1), thus 2^256.
+There are 32 bytes and each byte has 256 values, thus 256^32.
+Note: 2^256 == 256^32 ~= 10^77.
+[According to wikipedia]()
+
+That's 10^77 possible values a hash can have.
+
+> According to [space.com](https://www.space.com/26078-how-many-stars-are-there.html) ther're roughly about 10 trillion galaxies x 100 billion stars in the universe.
+
+Thats 10^77 possible hash values vs. 10^14 stars in th universe.
+
+---
+
+## Adding data
+
+### BitCoin: Proof of work
+
+In the BitCoin network the proof of work is:
+
+> Find a hash value that starts with a certain number of zeros.
+
+Of course compute power constantly increases. People turned away from using standard PCs and user special hardware to mine more more blocks.
+The network increased the number of zeros you'd need to find.
+
+Special video cards with GPUs and stuff are used.
+
+The network copes with this by increasing the difficulty level and require more zeros to be found.
+
+---
+
+## Adding data
+
+### BitCoin: Proof of work - JavaScript example
+
+```javascript
+calculateHash() {
+        return SHA256(this.index \
+            + this.previousHash \
+            + this.timestamp \
+            + JSON.stringify(this.data) \
+            + this.nonce) \
+            .toString();
+    }
+```
+
+```javascript
+mineBlock(difficulty) {
+  while (this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
+      this.nonce++;
+      this.hash = this.calculateHash();
+  }
+  console.log("BLOCK MINED: " + this.hash);
+}
+```
+Taken from [this description](https://www.savjee.be/2017/09/Implementing-proof-of-work-javascript-blockchain/)
+
+???
+
+Nonce means
+You may notice `nonce`.
+> Number used once - used to ensure a new hash value for the same block data.
+
+
+
+
+
+    </textarea>
+  <script src="https://remarkjs.com/downloads/remark-latest.min.js" type="text/javascript">
+  </script>
+  <script type="text/javascript">
+    var slideshow = remark.create();
+  </script>
+</body>
+
+</html>
